@@ -14,7 +14,98 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      business_metrics: {
+        Row: {
+          active_users: number | null
+          created_at: string | null
+          document_id: string | null
+          extracted_data: Json | null
+          health_change: number | null
+          id: string
+          revenue_change: number | null
+          sales_change: number | null
+          sales_growth: number | null
+          system_health: number | null
+          total_revenue: number | null
+          user_id: string
+          users_change: number | null
+        }
+        Insert: {
+          active_users?: number | null
+          created_at?: string | null
+          document_id?: string | null
+          extracted_data?: Json | null
+          health_change?: number | null
+          id?: string
+          revenue_change?: number | null
+          sales_change?: number | null
+          sales_growth?: number | null
+          system_health?: number | null
+          total_revenue?: number | null
+          user_id: string
+          users_change?: number | null
+        }
+        Update: {
+          active_users?: number | null
+          created_at?: string | null
+          document_id?: string | null
+          extracted_data?: Json | null
+          health_change?: number | null
+          id?: string
+          revenue_change?: number | null
+          sales_change?: number | null
+          sales_growth?: number | null
+          system_health?: number | null
+          total_revenue?: number | null
+          user_id?: string
+          users_change?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_metrics_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "uploaded_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      uploaded_documents: {
+        Row: {
+          analysis_status: string | null
+          created_at: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          id: string
+          storage_path: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          analysis_status?: string | null
+          created_at?: string | null
+          file_name: string
+          file_size: number
+          file_type: string
+          id?: string
+          storage_path: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          analysis_status?: string | null
+          created_at?: string | null
+          file_name?: string
+          file_size?: number
+          file_type?: string
+          id?: string
+          storage_path?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
