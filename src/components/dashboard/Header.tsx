@@ -1,15 +1,28 @@
 import { Button } from "@/components/ui/button";
 import { Moon, Sun, Bell, User } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 export const Header = () => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+  const [showNotifications, setShowNotifications] = useState(false);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -19,6 +32,24 @@ export const Header = () => {
 
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
+  };
+
+  const handleSignOut = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      navigate("/login");
+      toast({
+        title: "Signed out",
+        description: "You have been successfully signed out."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
   };
 
   return (
@@ -43,7 +74,12 @@ export const Header = () => {
           )}
         </Button>
 
-        <Button variant="ghost" size="icon" className="hover:bg-accent relative">
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          className="hover:bg-accent relative"
+          onClick={() => setShowNotifications(true)}
+        >
           <Bell className="w-5 h-5" />
           <span className="absolute top-2 right-2 w-2 h-2 bg-destructive rounded-full" />
         </Button>
@@ -55,12 +91,34 @@ export const Header = () => {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
-            <DropdownMenuItem>Sign Out</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/settings")}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate("/settings")}>
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
+              Sign Out
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
+      <Dialog open={showNotifications} onOpenChange={setShowNotifications}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Notifications</DialogTitle>
+            <DialogDescription>
+              You have no new notifications at this time.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3 py-4">
+            <p className="text-sm text-muted-foreground">
+              System notifications will appear here when available.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </header>
   );
 };

@@ -33,7 +33,15 @@ export const DocumentUpload = ({ onUpload, uploadedDoc }: DocumentUploadProps) =
   };
 
   const handleFileUpload = (file: File) => {
-    if (file.type === "application/pdf") {
+    const validTypes = [
+      "application/pdf",
+      "application/vnd.ms-excel",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      "application/msword",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
+    
+    if (validTypes.includes(file.type)) {
       onUpload(file.name);
       toast({
         title: "Document uploaded",
@@ -42,7 +50,7 @@ export const DocumentUpload = ({ onUpload, uploadedDoc }: DocumentUploadProps) =
     } else {
       toast({
         title: "Invalid file type",
-        description: "Please upload a PDF file",
+        description: "Please upload PDF, Excel (.xls, .xlsx), or Word (.doc, .docx) files",
         variant: "destructive",
       });
     }
@@ -82,16 +90,16 @@ export const DocumentUpload = ({ onUpload, uploadedDoc }: DocumentUploadProps) =
           >
             <Upload className={`w-12 h-12 mx-auto mb-4 ${isDragging ? "text-accent" : "text-muted-foreground"}`} />
             <p className="text-sm font-medium text-foreground mb-2">
-              Drop your PDF here or click to upload
+              Drop your document here or click to upload
             </p>
             <p className="text-xs text-muted-foreground mb-4">
-              Supports PDF files up to 10MB
+              Supports PDF, Excel (.xls, .xlsx), Word (.doc, .docx) up to 10MB
             </p>
             <input
               type="file"
               id="file-upload"
               className="hidden"
-              accept=".pdf"
+              accept=".pdf,.xls,.xlsx,.doc,.docx"
               onChange={handleFileInput}
             />
             <Button
