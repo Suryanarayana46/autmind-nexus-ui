@@ -1,35 +1,38 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { BarChart3, TrendingUp, PieChart as PieChartIcon } from "lucide-react";
+import { TrendingUp, BarChart3, PieChart as PieChartIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { BusinessMetrics } from "@/hooks/useBusinessMetrics";
 
-const lineData = [
-  { month: "Jan", revenue: 45000, expenses: 32000 },
-  { month: "Feb", revenue: 52000, expenses: 35000 },
-  { month: "Mar", revenue: 48000, expenses: 33000 },
-  { month: "Apr", revenue: 61000, expenses: 38000 },
-  { month: "May", revenue: 55000, expenses: 36000 },
-  { month: "Jun", revenue: 67000, expenses: 40000 },
-];
+const COLORS = ['#6366F1', '#10B981', '#F59E0B', '#EF4444'];
 
-const barData = [
-  { category: "Sales", value: 4500 },
-  { category: "Marketing", value: 3200 },
-  { category: "HR", value: 2800 },
-  { category: "Operations", value: 3900 },
-  { category: "IT", value: 2400 },
-];
+interface ChartsSectionProps {
+  metrics: BusinessMetrics | null | undefined;
+}
 
-const pieData = [
-  { name: "Product A", value: 35 },
-  { name: "Product B", value: 25 },
-  { name: "Product C", value: 20 },
-  { name: "Product D", value: 20 },
-];
+export const ChartsSection = ({ metrics }: ChartsSectionProps) => {
+  const lineData = metrics?.extracted_data?.monthlyData || [
+    { name: "Jan", revenue: 400000, expenses: 240000 },
+    { name: "Feb", revenue: 300000, expenses: 220000 },
+    { name: "Mar", revenue: 450000, expenses: 280000 },
+    { name: "Apr", revenue: 380000, expenses: 260000 },
+    { name: "May", revenue: 520000, expenses: 300000 },
+    { name: "Jun", revenue: 480000, expenses: 290000 },
+  ];
 
-const COLORS = ["hsl(217 89% 61%)", "hsl(135 57% 42%)", "hsl(43 97% 51%)", "hsl(4 82% 57%)"];
+  const barData = metrics?.extracted_data?.departmentData || [
+    { name: "Sales", value: 85 },
+    { name: "Marketing", value: 72 },
+    { name: "Engineering", value: 95 },
+    { name: "Support", value: 88 },
+  ];
 
-export const ChartsSection = () => {
+  const pieData = metrics?.extracted_data?.productData || [
+    { name: "Product A", value: 35 },
+    { name: "Product B", value: 25 },
+    { name: "Product C", value: 20 },
+    { name: "Product D", value: 20 },
+  ];
   return (
     <div className="space-y-6">
       <div>

@@ -5,11 +5,47 @@ import { AISummaryPanel } from "@/components/dashboard/AISummaryPanel";
 import { DocumentUpload } from "@/components/dashboard/DocumentUpload";
 import { ChartsSection } from "@/components/dashboard/ChartsSection";
 import { TrendingUp, Users, Activity, DollarSign } from "lucide-react";
+import { useBusinessMetrics } from "@/hooks/useBusinessMetrics";
+import { Chart3D } from "@/components/dashboard/3DChart";
 
 const Dashboard = () => {
   const [uploadedDoc, setUploadedDoc] = useState<string | null>(null);
+  const { data: metrics, isLoading } = useBusinessMetrics();
 
-  const kpiData = [
+  const kpiData = metrics ? [
+    {
+      title: "Total Revenue",
+      value: `$${(metrics.total_revenue / 1000000).toFixed(1)}M`,
+      change: `${metrics.revenue_change > 0 ? '+' : ''}${metrics.revenue_change}%`,
+      trend: metrics.revenue_change >= 0 ? "up" as const : "down" as const,
+      icon: DollarSign,
+      gradient: "gradient-primary",
+    },
+    {
+      title: "Active Users",
+      value: metrics.active_users.toLocaleString(),
+      change: `${metrics.users_change > 0 ? '+' : ''}${metrics.users_change}%`,
+      trend: metrics.users_change >= 0 ? "up" as const : "down" as const,
+      icon: Users,
+      gradient: "gradient-success",
+    },
+    {
+      title: "Sales Growth",
+      value: `${metrics.sales_growth}%`,
+      change: `${metrics.sales_change > 0 ? '+' : ''}${metrics.sales_change}%`,
+      trend: metrics.sales_change >= 0 ? "up" as const : "down" as const,
+      icon: TrendingUp,
+      gradient: "gradient-warning",
+    },
+    {
+      title: "System Health",
+      value: `${metrics.system_health}%`,
+      change: `${metrics.health_change > 0 ? '+' : ''}${metrics.health_change}%`,
+      trend: metrics.health_change >= 0 ? "up" as const : "down" as const,
+      icon: Activity,
+      gradient: "gradient-danger",
+    },
+  ] : [
     {
       title: "Total Revenue",
       value: "$2.4M",
@@ -72,9 +108,27 @@ const Dashboard = () => {
           </div>
         </div>
 
+        {/* 3D Charts Section */}
+        {metrics?.extracted_data && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+            <div className="card-elevated rounded-lg p-4 shadow-3d">
+              <Chart3D 
+                data={metrics.extracted_data.departmentData} 
+                title="Department Performance (3D)"
+              />
+            </div>
+            <div className="card-elevated rounded-lg p-4 shadow-3d">
+              <Chart3D 
+                data={metrics.extracted_data.productData} 
+                title="Product Distribution (3D)"
+              />
+            </div>
+          </div>
+        )}
+
         {/* Charts Section */}
-        <div className="animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <ChartsSection />
+        <div className="animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <ChartsSection metrics={metrics} />
         </div>
       </div>
     </DashboardLayout>
